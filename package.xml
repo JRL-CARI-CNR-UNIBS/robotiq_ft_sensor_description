@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>robotiq_ft_sensor_description</name>
+  <version>2.0.0</version>
+  <description>Package for reading data from a Robotiq Force Torque Sensor</description>
+  <!-- original package author and maintainer -->
+  <maintainer email="ros@robotiq.com">Jean-Philippe Roberge</maintainer>
+  <author email="jsavoie20@gmail.com">Jonathan Savoie</author>
+  <url type="website">http://ros.org/wiki/robotiq</url>
+
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+	  <build_type>ament_cmake</build_type>
+  </export>
+
+</package>

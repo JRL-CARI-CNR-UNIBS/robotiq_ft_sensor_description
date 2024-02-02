@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<!-- Develped by: Daniel Ordonez 20.06.2019 - daniels.ordonez@gmail.com-->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="robotiq_ft300">
+
+    <!-- Macro function to instanciate URDF model of the FT300 force-torque sensor with mounting plate
+
+        Example use:
+        ```
+            // Import this macro function
+            <xacro:include filename="$(find robotiq_ft_sensor)/urdf/robotiq_ft300.urdf.xacro" />
+
+            // Instanciate sensor instance and connect it to robot flange
+            <xacro:robotiq_ft300 parent="robot_flange_link" prefix="">
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </xacro:robotiq_ft300>
+        ```
+    -->
+    <xacro:macro name="robotiq_ft300" params="parent prefix *origin">
+
+        <!-- mount the fts to the robot -->
+        <joint name="${prefix}ft300_fix" type="fixed">
+            <xacro:insert_block name="origin" />
+            <parent link="${parent}" />
+            <!-- <child link="${prefix}ft300_sensor" /> -->
+            <child link="${prefix}interface_coupling"/>
+        </joint>
+
+        <link name="${prefix}interface_coupling">
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+        </link>
+
+        <joint name="${prefix}from interface_to_internal" type="fixed">
+            <parent link="${prefix}interface_coupling"/>
+            <child link="${prefix}ft300_sensor"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </joint>
+
+        <!-- Link representing the FT300 force-torque sensor -->
+        <link name="${prefix}ft300_sensor">
+            <visual>
+                <origin xyz="0 0 0.0375" rpy="0 ${pi} ${pi/2}" />
+                <geometry>
+                    <mesh filename="package://robotiq_ft_sensor_description/meshes/visual/ft300s-FTS-300-S_support.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="Robotiq-Black">
+                    <color rgba="0.2 0.2 0.2 1.0"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.02025" rpy="0 0 0" />
+                <geometry>
+                    <!-- <mesh filename="package://robotiq_ft_sensor_description/meshes/collision/ft300s-FTS-300-S_support.stl" scale="0.001 0.001 0.001"/> -->
+                    <cylinder radius="0.04435" length="0.04150"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- FORCE REFERENCE FRAME _______________________________________________________________________________
+            As specified in the documentation:
+            - The Z axis passes through the center of the depression with positive direction in the tool direction.
+            - The X axis traces a symmetric line centered on the connector; the positive direction
+                points the opposite way away from the connector.
+            - The Y axis uses the right hand thumb rule according to X-Z.  -->
+        <joint name="${prefix}measurment_joint" type="fixed">
+            <origin xyz="0 0 0.0375" rpy="0 0 0" /> 
+            <parent link="${prefix}ft300_sensor" />
+            <child link="${prefix}robotiq_ft_frame_id" />
+        </joint>
+
+        <link name="${prefix}robotiq_ft_frame_id"/>
+
+    </xacro:macro>
+</robot>
